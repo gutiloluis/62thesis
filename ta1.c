@@ -3,27 +3,37 @@
 #include <gsl/gsl_rng.h>
 
 int i;
+
 const gsl_rng_type *T;
 gsl_rng *R;
 
-double k_r = ;
-double k_a = ;
-double k_b = ;
+double k_r = 1.0;
+double k_a = 0.2;
+double k_b = 1.0;
 
-double kon_ab = ;
-double koff_ab = ;
+double kon_ab = 1.0;
+double koff_ab = 1.0;
 
-double kb_dab = ;
-double ku_dab = ;
+double kb_dab = 25.0;
+double ku_dab = 1.0;
 
-double g_r = ;
-double g_a = ;
-double g_ab = ;
-double g_b = ;
+double g_r = 0.1;
+double g_a = 0.02;
+double g_ab = 0.02;
+double g_b = 0.3;
+
+double t_total = 5/g_b;
+
+void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab);
+void cell(double t_total);
 
 int main(){
 
+	T = gsl_rng_mt19937;
+  R = gsl_rng_alloc(T);
+  gsl_rng_set(R,0);
 
+	cell(t_total);
 
 	return 0;
 
@@ -69,4 +79,21 @@ void step(double *t, double *d, double *r, double *a, double *b, double *ab, dou
 	} else {
 		*ab-=1;
 	}
+}
+
+void cell(double t_total){
+
+	double t=0;
+	double d=1;
+	double r=0;
+	double a=0;
+	double b=0;
+	double ab=0;
+	double dab=0;
+	printf('%f %f %f %f %f %f %f\n', t,d,r,a,b,ab,dab);
+	while(t<t_total){
+		step(&t, &d, &r, &a, &b, &ab, &dab);
+		printf('%f %f %f %f %f %f %f\n', t,d,r,a,b,ab,dab);
+	}
+
 }

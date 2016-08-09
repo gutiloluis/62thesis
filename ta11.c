@@ -8,7 +8,7 @@ const gsl_rng_type *T;
 gsl_rng *R;
 
 double k_r = 1.0;
-/*double k_a = 0.2;*/
+double k_a = 0.2;
 double k_b = 1.0;
 
 double kon_ab = 1.0;
@@ -27,9 +27,10 @@ double n_cells;
 
 double a_threshold = 10.0;
 
-void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab, double k_a);
-void cell(double t_total_1, double *a_f, double *b_f, double *ab_f, double *t2_f, double k_a);
-void cells(double t_total_1);
+
+void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab);
+void cell(double t_total_1);
+void cells(double n_cells, double t_total_1);
 
 int main(){
 
@@ -37,15 +38,15 @@ int main(){
   R = gsl_rng_alloc(T);
   gsl_rng_set(R,0);
 
-	*&t_total_1 = 10.0/g_b;
+	*&t_total = 10.0/g_b;
 
-	cells(t_total_1);
+	cell(t_total_1);
 
 	return 0;
 
 }
 
-void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab, double k_a){
+void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab){
 
 	double K = k_r**d + k_a**r + k_b**r + kon_ab**a**b + koff_ab**ab + kb_dab**d**ab + ku_dab**dab + g_r**r + g_a**a + g_b**b + g_ab**ab;
 
@@ -87,7 +88,7 @@ void step(double *t, double *d, double *r, double *a, double *b, double *ab, dou
 	}
 }
 
-void cell(double t_total_1, double *a_f, double *b_f, double *ab_f, double *t2_f, double k_a){
+void cell(double t_total){
 
 	double t=0;
 	double d=1;
@@ -96,29 +97,19 @@ void cell(double t_total_1, double *a_f, double *b_f, double *ab_f, double *t2_f
 	double b=0;
 	double ab=0;
 	double dab=0;
-	while(t<t_total_1){
-		step(&t, &d, &r, &a, &b, &ab, &dab, k_a);
+	printf("%f %f %f %f %f %f %f %f\n",t,d,r,a,b,ab,dab,a+ab);
+	while(t<t_total){
+		step(&t, &d, &r, &a, &b, &ab, &dab);
+		printf("%f %f %f %f %f %f %f %f\n",t,d,r,a,b,ab,dab,a+ab);
 	}
-	*a_f = a;
-	*b_f = b;
-	*ab_f = ab;
 
-	double t2 = 0;
-	while(a>a_threshold){
-		step(&t2, &d, &r, &a, &b, &ab, &dab, 0);
-	}
-	*t2_f = t2;
 }
 
-void cells(double t_total_1){
+void cells(double n_cells, double t_total){
 	double a_f;
 	double b_f;
 	double ab_f;
-	double t2_f;
-	double k_a=0.02;
-	while(k_a<=0.2){
-		cell(t_total_1, &a_f, &b_f, ab_f, t2_f, k_a);
-		printf("%f %f %f %f", t2_f, a_f, b_f, ab_f);
-		k_a*=2.0;
+	for(i=0;i<n_cells;i++){
+
 	}
 }

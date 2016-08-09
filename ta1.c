@@ -22,7 +22,11 @@ double g_a = 0.02;
 double g_ab = 0.02;
 double g_b = 0.3;
 
-double t_total = 5/g_b;
+double t_total;
+double n_cells;
+
+double a_threshold;
+
 
 void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab);
 void cell(double t_total);
@@ -32,6 +36,8 @@ int main(){
 	T = gsl_rng_mt19937;
   R = gsl_rng_alloc(T);
   gsl_rng_set(R,0);
+
+	*&t_total = 20.0/g_b;
 
 	cell(t_total);
 
@@ -90,10 +96,16 @@ void cell(double t_total){
 	double b=0;
 	double ab=0;
 	double dab=0;
-	printf('%f %f %f %f %f %f %f\n', t,d,r,a,b,ab,dab);
+	printf("%f %f %f %f %f %f %f %f\n",t,d,r,a,b,ab,dab,a+ab);
 	while(t<t_total){
 		step(&t, &d, &r, &a, &b, &ab, &dab);
-		printf('%f %f %f %f %f %f %f\n', t,d,r,a,b,ab,dab);
+		printf("%f %f %f %f %f %f %f %f\n",t,d,r,a,b,ab,dab,a+ab);
 	}
 
+}
+
+void cells(double n_cells, double t_total){
+	for(i=0;i<n_cells;i++){
+
+	}
 }

@@ -25,7 +25,7 @@ double g_b = 0.3;
 double t_total_1;
 double n_cells;
 
-double a_threshold = 10.0;
+double a_threshold = 2.0;
 
 void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab, double k_a);
 void cell(double t_total_1, double *a_f, double *b_f, double *ab_f, double *t2_f, double k_a);
@@ -117,8 +117,8 @@ void cells(double t_total_1){
 	double t2_f;
 	double k_a=0.02;
 	while(k_a<=0.2){
-		cell(t_total_1, &a_f, &b_f, ab_f, t2_f, k_a);
-		printf("%f %f %f %f", t2_f, a_f, b_f, ab_f);
+		cell(t_total_1, &a_f, &b_f, &ab_f, &t2_f, k_a);
+		printf("%f %f %f %f\n", t2_f, a_f, b_f, ab_f);
 		k_a*=2.0;
 	}
 }

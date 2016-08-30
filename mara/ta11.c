@@ -7,26 +7,12 @@ int i;
 const gsl_rng_type *T;
 gsl_rng *R;
 
-double k_r = 1.0;
-double k_r_l = 0.1; /*Leakage fraction of the total.*/
-double k_a = 0.2; /*0.2 default*/
-double k_b = 1.0;/*1,0 default*/
 
-double kon_ab = 1.0;
-double koff_ab = 1.0;
-
-double kb_dab = 25.0;
-double ku_dab = 1.0;
-
-double g_r = 0.1;
-double g_a = 0.02;
-double g_ab = 0.02;
-double g_b = 0.3;
+double V = 1.0;
 
 double t_total_1;
 double n_cells;
 
-double a_threshold = 10.0;
 
 
 void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab);
@@ -47,9 +33,50 @@ int main(){
 
 }
 
-void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab){
+/*Species
+States of the promoter, the first number represents the number of A (MarA) molecules bound and the second the number of MarR_2 molecules bound
+p00
+p01
+p02
+p10
+p11
+p12
+m: mRNA
+au: marA unfolded
+a: marA
+ru: marR unfolded
+r: MarR
+r2: MarR_2
+s: salicylate
+r2s: MarR_2 bound to salicylate.
+*/
 
-	double K = k_r**d + k_a**r + k_b**r + kon_ab**a**b + koff_ab**ab + kb_dab**d**ab + ku_dab**dab + g_r**r + g_a**a + g_b**b + g_ab**ab;
+/*Reactions
+1, (3) a dissociation from p
+2. (3) a association to p
+3. (4) r2 dissociation from p
+4. (4) r2 association to p
+5. (6) transcription
+6. m degradation
+7. a translation
+8. r translation
+9. a folding
+10. r folding
+11. r dimerization
+12. r2 dimer disruption
+13. au degradation
+14. a degradation
+15. ru degradation
+16. r degradation
+17. r2 degradation
+18. r2 ans s binding
+19. r2s unbinding
+*/
+
+
+void step(double *t, double *p00, double *p01, double *p02, double *p10, double *p11, double *p12, double *m, double *au, double *a, double *ru, double *r, double *r2, double *s, double *r2s){
+
+	double K = ( ka_u**p10 + ka_u**p11 + ka_u**p12 )  +  ( ka**p00**a/v + ka**p01**a/(v*b) + ka**p02**a/(v*b_p) )  +  ( kr_u**p01 + 2.0*kr_u**p02 + kr_u**p11 + 2.0*kr_u**p12 )  +  ( 2.0*kr**p00**r2/v + kr**p01**r2/v + 2.0*kr**p10**r2/(v*al)  +  kr**p11**r2/(v*al_p) )  +  ( al00**p00 + al01**p01 + al10**p10 + al11**p11 + al12**p12 + al02**p02 )  +  ( l_m**m )  +  ()
 
 	double Dt = -log(gsl_rng_uniform(R))/K;
   double which = gsl_rng_uniform(R);

@@ -8,16 +8,50 @@ const gsl_rng_type *T;
 gsl_rng *R;
 
 
-double V = 1.0;
+double ka_u = 1.8;
+double ka = ka_u/1500.0;
+double kr_u = 1.8;
+double kr = kr_u/150.0;
 
-double t_total_1;
-double n_cells;
+double c_inh1 = 800;
+double c_inh2 = 10;
+double c_act = 80;
+
+double al00 = 0.4;
+double al01;
+double al10;
+double al11;
+double al12);
+double al02;
+
+double l_m = log(2.0)/24.0;
+
+double b_a = 0.34*20.0;
+double b_r = 0.044*20.0;
+
+double kf_a = 5.0;
+double kf_r = 5.0;
+
+double kd_r = 0.01;
+double kd_ru;
+
+double l_r = log(2)/24.0
+double l_r2;
+double l_au;
+double l_a = log(2);
+double l_ru;
+
+double ks = 20.0;
+double ks_u = 0.5;
+
+double v = 1.0;
+
+double t_total;
 
 
 
 void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab);
 void cell(double t_total_1);
-void cells(double n_cells, double t_total_1);
 
 int main(){
 
@@ -25,9 +59,21 @@ int main(){
   R = gsl_rng_alloc(T);
   gsl_rng_set(R,0);
 
-	*&t_total_1 = 100.0/g_b;
+	*&al01 = al00/c_inh1;
+	*&al10 = al00*c_act;
+	*&al11 = al00*c_act/c_inh1;
+	*&al12 = al00*c_act/(c_inh1*c_inh2);
+	*&al02 = al00/(c_inh1*c_inh2);
 
-	cell(t_total_1);
+	*&kd_ru = kd_r / 50.0
+
+	*&l_r2 = l_r;
+	*&l_au = l_r;
+	*&l_ru = l_r;
+
+	*&t_total = 5.0/(l_a + l_r);
+
+	cell(t_total);
 
 	return 0;
 
@@ -152,179 +198,179 @@ void step(double *t, double *p00, double *p01, double *p02, double *p10, double 
 	*t+=Dt;
 
 	/* a dissociation from p10 */
-	if(  ){
+	if( w < K1/K ){
 		*p10 -= 1;
 		*p00 += 1;
 		*a += 1;
 	}
 	/* a dissociation from p11 */
-	else if(  ){
+	else if( w >= K1/K && w < K2/K ){
 		*p11 -= 1;
 		*p01 += 1;
 		*a += 1;
 	}
 	/* a dissociation from p12 */
-	else if(  ){
+	else if( w >= K2/K && w < K3/K ){
 		*p12 -= 1;
 		*p02 += 1;
 		*a += 1;
 	}
 	/*a association to p00 */
-	else if(  ){
+	else if( w >= K3/K && w < K4/K ){
 		*p00 -= 1;
 		*p10 += 1;
 		*a -= 1;
 	}
 	/*a association to p01 */
-	else if(  ){
+	else if( w >= K4/K && w < K5/K ){
 		*p01 -= 1;
 		*p11 += 1;
 		*a -= 1;
 	}
 	/*a association to p02 */
-	else if(  ){
+	else if( w >= K5/K && w < K6/K ){
 		*p02 -= 1;
 		*p12 += 1;
 		*a -= 1;
 	}
 	/*r2 dissociation from p01 */
-	else if(  ){
+	else if( w >= K6/K && w < K7/K ){
 		*p01 -= 1;
 		*p00 += 1;
 		*r2 += 1;
 	}
 	/*r2 dissociation from p02 */
-	else if(  ){
+	else if( w >= K7/K && w < K8/K ){
 		*p02 -= 1;
 		*p01 += 1;
 		*r2 += 1;
 	}
 	/*r2 dissociation from p11 */
-	else if(  ){
+	else if( w >= K8/K && w < K9/K ){
 		*p11 -= 1;
 		*p10 += 1;
 		*r2 += 1;
 	}
 	/*r2 dissociation from p12 */
-	else if(  ){
+	else if( w >= K9/K && w < K10/K ){
 		*p12 -= 1;
 		*p11 += 1;
 		*r2 += 1;
 	}
 	/*r2 association to p00 */
-	else if(  ){
+	else if( w >= K10/K && w < K11/K ){
 		*p00 -= 1;
 		*p01 += 1;
 		*r2 -= 1;
 	}
 	/*r2 association to p01 */
-	else if(  ){
+	else if( w >= K11/K && w < K12/K ){
 		*p01 -= 1;
 		*p02 += 1;
 		*r2 -= 1;
 	}
 	/*r2 association to p10 */
-	else if(  ){
+	else if( w >= K12/K && w < K13/K ){
 		*p10 -= 1;
 		*p11 += 1;
 		*r2 -= 1;
 	}
 	/*r2 association to p11 */
-	else if(  ){
+	else if( w >= K13/K && w < K14/K ){
 		*p11 -= 1;
 		*p12 += 1;
 		*r2 -= 1;
 	}
 	/*transcription with p00 */
-	else if(  ){
+	else if( w >= K14/K && w < K15/K ){
 		*m+=1;
 		*ru+=1;
 		*au+=1;
 	}
 	/*transcription with p01 */
-	else if(  ){
+	else if( w >= K15/K && w < K16/K ){
 		*m+=1;
 		*ru+=1;
 		*au+=1;
 	}
 	/*transcription with p10 */
-	else if(  ){
+	else if( w >= K16/K && w < K17/K ){
 		*m+=1;
 		*ru+=1;
 		*au+=1;
 	}
 	/*transcription with p11 */
-	else if(  ){
+	else if( w >= K17/K && w < K18/K ){
 		*m+=1;
 		*ru+=1;
 		*au+=1;
 	}
 	/*transcription with p12 */
-	else if(  ){
+	else if( w >= K18/K && w < K19/K ){
 		*m+=1;
 		*ru+=1;
 		*au+=1;
 	}
 	/*transcription with p02 */
-	else if(  ){
+	else if( w >= K19/K && w < K20/K ){
 		*m+=1;
 		*ru+=1;
 		*au+=1;
 	}
 	/*m degradation */
-	else if(  ){
+	else if( w >= K20/K && w < K21/K ){
 		*m -= 1;
 	}
 	/*a translation */
-	else if(  ){
+	else if( w >= K21/K && w < K22/K ){
 		*au += 1;
 	}
 	/*r translation */
-	else if(  ){
+	else if( w >= K22/K && w < K23/K ){
 		*ru += 1;
 	}
 	/*a folding */
-	else if(  ){
+	else if( w >= K23/K && w < K24/K ){
 		*au -= 1;
 		*a += 1;
 	}
 	/*r folding */
-	else if(  ){
+	else if( w >= K24/K && w < K25/K ){
 		*ru -= 1;
 		*r += 1;
 	}
 	/*r dimerization */
-	else if(  ){
+	else if( w >= K25/K && w < K26/K ){
 		*r2 += 1;
 		*r -= 2;
 	}
 	/*r2 dimer disruption */
-	else if(  ){
+	else if( w >= K26/K && w < K27/K ){
 		*r2 -= 1;
 		*r += 2;
 	}
 	/*au degradation */
-	else if(  ){
+	else if( w >= K27/K && w < K28/K ){
 		*au -= 1;
 	}
 	/*a degradation */
-	else if(  ){
+	else if( w >= K28/K && w < K29/K ){
 		*a -= 1;
 	}
 	/*ru degradation */
-	else if(  ){
+	else if( w >= K29/K && w < K30/K ){
 		*ru -= 1;
 	}
 	/*r degradation */
-	else if(  ){
+	else if( w >= K30/K && w < K31/K ){
  		*r -= 1;
 	}
 	/*r2 degradation */
-	else if(  ){
+	else if( w >= K31/K && w < K32/K ){
 		*r2 -= 1;
 	}
 	/*r2 and s association */
-	else if(  ){
+	else if( w >= K32/K && w < K33/K ){
 		*s -= 1;
 		*r2 -= 1;
 		*r2s += 1;
@@ -339,20 +385,29 @@ void step(double *t, double *p00, double *p01, double *p02, double *p10, double 
 
 void cell(double t_total){
 
-	double t=0;
-	double d=1;
-	double r=0;
-	double a=0;
-	double b=0;
-	double ab=0;
-	double dab=0;
+	/*SI LOS HAGO INT LA EMBARRO, NO ES MEJOR POR EFICIENCIA?*/
+	double t=0.0;
+	double p00 = 1;
+	double p01 = 0;
+	double p02 = 0;
+	double p10 = 0;
+	double p11 = 0;
+	double p12 = 0;
+	double m = 0;
+	double au = 0;
+	double a = 0;
+	double ru = 0;
+	double r = 0;
+	double r2 = 0;
+	double s = 0;
+	double r2s = 0;
 
-	FILE *out = fopen("one_one_cell.dat", "w");
+	FILE *out = fopen("one_cell.dat", "w");
 
-	fprintf(out, "%f %f %f %f %f %f %f %f\n",t,d,r,a,b,ab,dab,a+ab);
+	fprintf(out, "%f %f %f %f %f\n",t,a,r,r2,r2s);
 	while(t<t_total){
-		step(&t, &d, &r, &a, &b, &ab, &dab);
-		fprintf(out, "%f %f %f %f %f %f %f %f\n",t,d,r,a,b,ab,dab,a+ab);
+		step(&t, &p00, &p01, &p02, &p10, &p11, &p12, &m, &au, &a, &ru, &r, &r2, &s, &r2s);
+		fprintf(out, "%f %f %f %f %f\n",t,a,r,a,r2,r2s);
 	}
 	fclose(out);
 }

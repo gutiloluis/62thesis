@@ -9,8 +9,8 @@ gsl_rng *R;
 
 double k_r = 1.0;
 double k_r_l = 0.1; /*Leakage fraction of the total.*/
-double k_a = 0.2; /*0.2 default*/
-double k_b = 1.0;/*1,0 default*/
+double k_a = 2.0; /*0.2 default*/
+double k_b = 10.0;/*1,0 default*/
 
 double kon_ab = 1.0;
 double koff_ab = 1.0;

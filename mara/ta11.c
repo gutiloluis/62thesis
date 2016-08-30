@@ -77,49 +77,118 @@ void step(double *t, double *p00, double *p01, double *p02, double *p10, double 
 
 	double K = ( ka_u**p10 + ka_u**p11 + ka_u**p12 )  +  ( ka**p00**a/v + ka**p01**a/(v*b) + ka**p02**a/(v*b_p) )  +  ( kr_u**p01 + 2.0*kr_u**p02 + kr_u**p11 + 2.0*kr_u**p12 )  +  ( 2.0*kr**p00**r2/v + kr**p01**r2/v + 2.0*kr**p10**r2/(v*al)  +  kr**p11**r2/(v*al_p) )  +  ( al00**p00 + al01**p01 + al10**p10 + al11**p11 + al12**p12 + al02**p02 )  +  ( l_m**m )  +  ( b_a**m )  +  ( b_r**m )  +  ( kf_a**au )  +  ( kf_r**ru )  +  ( kd_r**r*(*r-1)/(v*2.0) )  +  ( kd_ru**r2 )  +  ( l_au**au )  +  ( l_a**a )  +  ( l_ru**ru )  +  ( l_r**r + l_r2**r2 )  +  ( ks**r2**s/v )  +  ( ks_u**r2s );
 
+	/* a dissociation from p10 */
+	K1 = ( ka_u**p10 );
+	/* a dissociation from p11 */
+	K2 = K1 + ka_u**p11;
+	/* a dissociation from p12 */
+	K3 = K2 + ka_u**p12;
+	/*a association to p00 */
+	K4 = K3 + ka**p00**a/v;
+	/*a association to p01 */
+	K5 = K4 + ka**p01**a/(v*b);
+	/*a association to p02 */
+	K6 = K5 + ka**p02**a/(v*b_p);
+	/*r2 dissociation from p01 */
+	K7 = K6 + kr_u**p01;
+	/*r2 dissociation from p02 */
+	K8 = K7 + 2.0*kr_u**p02;
+	/*r2 dissociation from p11 */
+	K9 = K8 + kr_u**p11;
+	/*r2 dissociation from p12 */
+	K10 = K9 + 2.0*kr_u**p12;
+	/*r2 association to p00 */
+	K11 = K10 + 2.0*kr**p00**r2/v;
+	/*r2 association to p01 */
+	K12 = K11 + kr**p01**r2/v;
+	/*r2 association to p10 */
+	K13 = K12 + 2.0*kr**p10**r2/(v*al);
+	/*r2 association to p11 */
+	K14 = K13 + kr**p11**r2/(v*al_p);
+	/*transcription with p00 */
+	K15 = K14 + al00**p00;
+	/*transcription with p01*/
+	K16 = K15 + al01**p01;
+	/*transcription with p10 */
+	K17 = K16 + al10**p10;
+	/*transcription with p11 */
+	K18 = K17 + al11**p11;
+	/*transcription with p12 */
+	K19 = K18 + al12**p12;
+	/*transcription with p02 */
+	K20 = K19 + al02**p02;
+	/*m degradation */
+	K21 = K20 + l_m**m;
+	/*a translation */
+	K22 = K21 + b_a**m;
+	/*r translation */
+	K23 = K22 + b_r**m;
+	/*a folding */
+	K24 = K23 + kf_a**au;
+	/*r folding */
+	K25 = K24 + kf_r**ru;
+	/*r dimerization */
+	K26 = K25 + kd_r**r*(*r-1)/(v*2.0);
+	/*r2 dimer disruption */
+	K27 = K26 + kd_ru**r2;
+	/*au degradation */
+	K28 = K27 + l_au**au;
+	/*a degradation */
+	K29 = K28 + l_a**a;
+	/*ru degradation */
+	K30 = K29 + l_ru**ru;
+	/*r degradation */
+	K31 = K30 + l_r**r;
+	/*r2 degradation */
+	K32 = K31 + l_r2**r2;
+	/*r2 and s association */
+	K33 = K32 + ks**r2**s/v;
+	/*r2s dissociation*/
+	K34 = K33 + ks_u**r2s;
+
 	double Dt = -log(gsl_rng_uniform(R))/K;
   double w = gsl_rng_uniform(R);
 
 	*t+=Dt;
 
 	/* a dissociation from p10 */
-	if( w < ka_u**p10/K ){
+	if(  ){
 		*p10 -= 1;
 		*p00 += 1;
 		*a += 1;
 	}
 	/* a dissociation from p11 */
-	else if( w >= ka_u**p10/K && w < ( ka_u**p10 + ka_u**p11 )/K ){
+	else if(  ){
 		*p11 -= 1;
 		*p01 += 1;
 		*a += 1;
 	}
 	/* a dissociation from p12 */
-	else if( w >= ( ka_u**p10 + ka_u**p11 )/K && w < ( ka_u**p10 + ka_u**p11 + ka_u**p12 )/K ){
+	else if(  ){
 		*p12 -= 1;
 		*p02 += 1;
 		*a += 1;
 	}
 	/*a association to p00 */
-	else if( w >= ( ka_u**p10 + ka_u**p11 + ka_u**p12 )/K && w < ( (ka_u**p10 + ka_u**p11 + ka_u**p12) + (ka**p00**a/v) )/K){
+	else if(  ){
 		*p00 -= 1;
 		*p10 += 1;
 		*a -= 1;
 	}
 	/*a association to p01 */
-	else if( w >= ( (ka_u**p10 + ka_u**p11 + ka_u**p12) + (ka**p00**a/v) )/K && w < ( (ka_u**p10 + ka_u**p11 + ka_u**p12) + (ka**p00**a/v + ka**p01**a/(v*b)) )/K ){
+	else if(  ){
 		*p01 -= 1;
 		*p11 += 1;
 		*a -= 1;
 	}
 	/*a association to p02 */
-	else if( w >= ( (ka_u**p10 + ka_u**p11 + ka_u**p12) + (ka**p00**a/v + ka**p01**a/(v*b)) )/K && w < ( (ka_u**p10 + ka_u**p11 + ka_u**p12) + (ka**p00**a/v + ka**p01**a/(v*b) + ka**p02**a/(v*b_p)) )/K ){
+	else if(  ){
 		*p02 -= 1;
 		*p12 += 1;
 		*a -= 1;
 	}
 	/*r2 dissociation from p01 */
-	else if( w >= ( (ka_u**p10 + ka_u**p11 + ka_u**p12) + (ka**p00**a/v + ka**p01**a/(v*b) + ka**p02**a/(v*b_p)) )/K && w < ( (ka_u**p10 + ka_u**p11 + ka_u**p12) + (ka**p00**a/v + ka**p01**a/(v*b) + ka**p02**a/(v*b_p)) + (kr_u**p01) )/K ){
+	else if(  ){
 		*p01 -= 1;
 		*p00 += 1;
 		*r2 += 1;
@@ -168,115 +237,103 @@ void step(double *t, double *p00, double *p01, double *p02, double *p10, double 
 	}
 	/*transcription with p00 */
 	else if(  ){
-
+		*m+=1;
+		*ru+=1;
+		*au+=1;
 	}
-	/*transcription with p00 */
+	/*transcription with p01 */
 	else if(  ){
-
+		*m+=1;
+		*ru+=1;
+		*au+=1;
 	}
-	/*transcription with p00 */
+	/*transcription with p10 */
 	else if(  ){
-
+		*m+=1;
+		*ru+=1;
+		*au+=1;
 	}
-	/*transcription with p00 */
+	/*transcription with p11 */
 	else if(  ){
-
+		*m+=1;
+		*ru+=1;
+		*au+=1;
 	}
-	/*transcription with p00 */
+	/*transcription with p12 */
 	else if(  ){
-
+		*m+=1;
+		*ru+=1;
+		*au+=1;
 	}
-	/*transcription with p00 */
+	/*transcription with p02 */
 	else if(  ){
-
+		*m+=1;
+		*ru+=1;
+		*au+=1;
 	}
-	/*r2 dissociation from p02 */
+	/*m degradation */
 	else if(  ){
-
+		*m -= 1;
 	}
-	/*r2 dissociation from p02 */
+	/*a translation */
 	else if(  ){
-
+		*au += 1;
 	}
-	/*r2 dissociation from p02 */
+	/*r translation */
 	else if(  ){
-
+		*ru += 1;
 	}
-	/*r2 dissociation from p02 */
+	/*a folding */
 	else if(  ){
-
+		*au -= 1;
+		*a += 1;
 	}
-	/*r2 dissociation from p02 */
+	/*r folding */
 	else if(  ){
-
+		*ru -= 1;
+		*r += 1;
 	}
-	/*r2 dissociation from p02 */
+	/*r dimerization */
 	else if(  ){
-
+		*r2 += 1;
+		*r -= 2;
 	}
-	/*r2 dissociation from p02 */
+	/*r2 dimer disruption */
 	else if(  ){
-
+		*r2 -= 1;
+		*r += 2;
 	}
-	/*r2 dissociation from p02 */
+	/*au degradation */
 	else if(  ){
-
+		*au -= 1;
 	}
-	/*r2 dissociation from p02 */
+	/*a degradation */
 	else if(  ){
-
+		*a -= 1;
 	}
-	/*r2 dissociation from p02 */
+	/*ru degradation */
 	else if(  ){
-
+		*ru -= 1;
 	}
-	/*r2 dissociation from p02 */
+	/*r degradation */
 	else if(  ){
-
+ 		*r -= 1;
 	}
-	/*r2 dissociation from p02 */
+	/*r2 degradation */
 	else if(  ){
-
+		*r2 -= 1;
 	}
-	/*r2 dissociation from p02 */
+	/*r2 and s association */
 	else if(  ){
-
+		*s -= 1;
+		*r2 -= 1;
+		*r2s += 1;
 	}
-	/*r2 dissociation from p02 */
-	else if(  ){
-
-	}
-	/*r2 dissociation from p02 */
-	else if(  ){
-
-	}
-	/*r2 dissociation from p02 */
-	else if(  ){
-
-	}
-	/*r2 dissociation from p02 */
-	else if(  ){
-
-	}
-	/*r2 dissociation from p02 */
-	else if(  ){
-
-	}
-	/*r2 dissociation from p02 */
-	else if(  ){
-
-	}
-
-
-
-	if(which < k_r**d/K){
-		*r+=1;
-	} else if(which >= k_r**d/K && which < (k_r**d + k_a**r)/K){
-		*a+=1;
-	} else if(which >= (k_r**d + k_a**r)/K && which < (k_r**d + k_a**r + k_b**r)/K){
-		*b+=1;
-	} else {
-		*ab-=1;
+	/*r2s dissociation*/
+	else {
+		*s += 1;
+		*r2 += 1;
+		*r2s += 1;
 	}
 }
 

@@ -7,11 +7,10 @@ int i;
 const gsl_rng_type *T;
 gsl_rng *R;
 
-
 double ka_u = 1.8;
-double ka = ka_u/1500.0;
+double ka;
 double kr_u = 1.8;
-double kr = kr_u/150.0;
+double kr;
 
 double c_inh1 = 800;
 double c_inh2 = 10;
@@ -21,10 +20,10 @@ double al00 = 0.4;
 double al01;
 double al10;
 double al11;
-double al12);
+double al12;
 double al02;
 
-double l_m = log(2.0)/24.0;
+double l_m;
 
 double b_a = 0.34*20.0;
 double b_r = 0.044*20.0;
@@ -35,23 +34,28 @@ double kf_r = 5.0;
 double kd_r = 0.01;
 double kd_ru;
 
-double l_r = log(2)/24.0
+double l_r;
 double l_r2;
 double l_au;
-double l_a = log(2);
+double l_a;
 double l_ru;
 
 double ks = 20.0;
 double ks_u = 0.5;
 
+double al = 1000.0;
+double al_p = 1.5;
+double b = 1.5;
+double b_p = 1.5;
+
 double v = 1.0;
 
 double t_total;
 
+double K, K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11, K12, K13, K14, K15, K16, K17, K18, K19, K20, K21, K22, K23, K24, K25, K26, K27, K28, K29, K30, K31, K32, K33, K34;
 
-
-void step(double *t, double *d, double *r, double *a, double *b, double *ab, double *dab);
-void cell(double t_total_1);
+void step(double *t, double *p00, double *p01, double *p02, double *p10, double *p11, double *p12, double *m, double *au, double *a, double *ru, double *r, double *r2, double *s, double *r2s);
+void cell(double t_total);
 
 int main(){
 
@@ -59,19 +63,26 @@ int main(){
   R = gsl_rng_alloc(T);
   gsl_rng_set(R,0);
 
+	*&ka = ka_u/1500.0;
+	*&kr = kr_u/150.0;
+
 	*&al01 = al00/c_inh1;
 	*&al10 = al00*c_act;
 	*&al11 = al00*c_act/c_inh1;
 	*&al12 = al00*c_act/(c_inh1*c_inh2);
 	*&al02 = al00/(c_inh1*c_inh2);
 
-	*&kd_ru = kd_r / 50.0
+	*&l_m = log(2.0)/24.0;
+	*&l_r = log(2.0)/24.0;
+	*&l_a = log(2);
+
+	*&kd_ru = kd_r / 50.0;
 
 	*&l_r2 = l_r;
 	*&l_au = l_r;
 	*&l_ru = l_r;
 
-	*&t_total = 5.0/(l_a + l_r);
+	*&t_total = 1000.0/(l_a + l_r);
 
 	cell(t_total);
 
@@ -121,7 +132,7 @@ r2s: MarR_2 bound to salicylate.
 
 void step(double *t, double *p00, double *p01, double *p02, double *p10, double *p11, double *p12, double *m, double *au, double *a, double *ru, double *r, double *r2, double *s, double *r2s){
 
-	double K = ( ka_u**p10 + ka_u**p11 + ka_u**p12 )  +  ( ka**p00**a/v + ka**p01**a/(v*b) + ka**p02**a/(v*b_p) )  +  ( kr_u**p01 + 2.0*kr_u**p02 + kr_u**p11 + 2.0*kr_u**p12 )  +  ( 2.0*kr**p00**r2/v + kr**p01**r2/v + 2.0*kr**p10**r2/(v*al)  +  kr**p11**r2/(v*al_p) )  +  ( al00**p00 + al01**p01 + al10**p10 + al11**p11 + al12**p12 + al02**p02 )  +  ( l_m**m )  +  ( b_a**m )  +  ( b_r**m )  +  ( kf_a**au )  +  ( kf_r**ru )  +  ( kd_r**r*(*r-1)/(v*2.0) )  +  ( kd_ru**r2 )  +  ( l_au**au )  +  ( l_a**a )  +  ( l_ru**ru )  +  ( l_r**r + l_r2**r2 )  +  ( ks**r2**s/v )  +  ( ks_u**r2s );
+	K = ( ka_u**p10 + ka_u**p11 + ka_u**p12 )  +  ( ka**p00**a/v + ka**p01**a/(v*b) + ka**p02**a/(v*b_p) )  +  ( kr_u**p01 + 2.0*kr_u**p02 + kr_u**p11 + 2.0*kr_u**p12 )  +  ( 2.0*kr**p00**r2/v + kr**p01**r2/v + 2.0*kr**p10**r2/(v*al)  +  kr**p11**r2/(v*al_p) )  +  ( al00**p00 + al01**p01 + al10**p10 + al11**p11 + al12**p12 + al02**p02 )  +  ( l_m**m )  +  ( b_a**m )  +  ( b_r**m )  +  ( kf_a**au )  +  ( kf_r**ru )  +  ( kd_r**r*(*r-1)/(v*2.0) )  +  ( kd_ru**r2 )  +  ( l_au**au )  +  ( l_a**a )  +  ( l_ru**ru )  +  ( l_r**r + l_r2**r2 )  +  ( ks**r2**s/v )  +  ( ks_u**r2s );
 
 	/* a dissociation from p10 */
 	K1 = ( ka_u**p10 );
@@ -407,7 +418,7 @@ void cell(double t_total){
 	fprintf(out, "%f %f %f %f %f\n",t,a,r,r2,r2s);
 	while(t<t_total){
 		step(&t, &p00, &p01, &p02, &p10, &p11, &p12, &m, &au, &a, &ru, &r, &r2, &s, &r2s);
-		fprintf(out, "%f %f %f %f %f\n",t,a,r,a,r2,r2s);
+		fprintf(out, "%f %f %f %f %f\n",t,a,r,r2,r2s);
 	}
 	fclose(out);
 }
